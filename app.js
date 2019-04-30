@@ -79,7 +79,7 @@ var UIController = (function() {
       return {
         type: document.querySelector(DOMstrings.inputType).value, // This will grab either inc or exp
         description: document.querySelector(DOMstrings.inputDescription).value, // This will grab the income description
-        value: document.querySelector(DOMstrings.inputValue).value // This will grab the value field
+        value: parseFloat(document.querySelector(DOMstrings.inputValue).value) // This will grab the value field - Parse float will convert the string to an int
       };
     },
 
@@ -139,19 +139,31 @@ var controller = (function(budgetCtrl, UICtrl) {
     });
   };
  
+  var updateBudget = function(){
+    // 1. Calculate the budget
+
+    // 2. Return the budget
+
+    // 3. Display the budget on the UI
+
+  }
+
   // Function for the event listeners for getting input data.
   var ctrlAddItem = function() {
     var input, newItem;
     // 1. Get the field input data
     input = UICtrl.getInput();
-    // 2. Add the item to the budget controller
-    newItem = budgetCtrl.addItem(input.type, input.description, input.value);
-    // 3. Add the new item to the UI
-    UICtrl.addListItem(newItem, input.type);
-    // 4. Clear the fields
-    UICtrl.clearFields();
-    // 5. Calc the budget
-    // 6. Display the budget on the UI
+    // Check to see if user has entered data into fields. Not = to empty string, not NaN and greater than 0.
+    if(input.description !== "" && !isNaN(input.value) && input.value > 0){
+        // 2. Add the item to the budget controller
+        newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+        // 3. Add the new item to the UI
+        UICtrl.addListItem(newItem, input.type);
+        // 4. Clear the fields
+        UICtrl.clearFields();
+        // 5. Calculate and update the budget
+        updateBudget();
+    }
   };
 
   // All the functions that will setup the app when starting.
