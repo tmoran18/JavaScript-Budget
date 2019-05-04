@@ -1,4 +1,5 @@
-// These are the three different Modules are wrapped in an IIFE allowing for public and private functions
+// These are the three different Modules are wrapped in an IIFE allowing for 
+// public and private functions
 
 /******BUDGET CONTROLLER********/
 var budgetController = (function() {
@@ -64,6 +65,20 @@ var budgetController = (function() {
 
         // Return the new element
         return newItem;
+      },
+
+      deleteItem: function(type, ID){
+        var ids, index;
+        
+        ids = data.allItems[type].map(function(current) {
+          return current.id;
+        });
+
+        index = ids.indexOf(id);
+
+        if(index !== -1) {
+          data.allItems[type].splice(index, 1);
+        }
       },
 
       calculateBudget: function(){
@@ -237,7 +252,7 @@ var controller = (function(budgetCtrl, UICtrl) {
         ID = splitID[1];
 
         // 1. Dlete item from the data structure
-
+        budgetCtrl.deleteItem(type, id);
         // 2. Delete the item from the UI
 
         // 3. Update and show the new budget
