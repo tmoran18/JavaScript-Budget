@@ -67,7 +67,9 @@ var budgetController = (function() {
         return newItem;
       },
 
-      deleteItem: function(type, ID){
+      
+      // This functions loops over allitems ID array.
+      deleteItem: function(type, id) {
         var ids, index;
         
         ids = data.allItems[type].map(function(current) {
@@ -160,6 +162,14 @@ var UIController = (function() {
       // Insert the HTML into the DOM.. insertAdjacentHTML.beforeend will insert as last child in the classes income__list or expense__list depending on the if statement
       document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
     },
+
+    // Remove and item from the UI
+    // This has to be done by traversing up into the parent node to then select the child node
+    deleteListItem: function(selectorID){
+      var el = document.getElementById(selectorID);
+      el.parentNode.removeChild(el);
+    },
+
     // Clear the input fields
     clearFields: function(){
       var fields, fieldsArr;
@@ -249,13 +259,15 @@ var controller = (function(budgetCtrl, UICtrl) {
       if(itemID){
         splitID = itemID.split('-');
         type = splitID[0];
-        ID = splitID[1];
+        // Parse Int converts ID which is a string to an interger
+        ID = parseInt(splitID[1]);
 
         // 1. Dlete item from the data structure
-        budgetCtrl.deleteItem(type, id);
+        budgetCtrl.deleteItem(type, ID);
         // 2. Delete the item from the UI
-
+        UICtrl.deleteListItem(itemID);
         // 3. Update and show the new budget
+        updateBudget();
       }
     };
 
