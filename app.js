@@ -160,7 +160,31 @@ var UIController = (function() {
     expensesLabel: '.budget__expenses--value',
     percentageLabel: '.budget__expenses--percentage',
     container: '.container',
-    expensesPercLabel: '.item__percentage'
+    expensesPercLabel: '.item__percentage',
+    dateLabel: '.budget__title--month'
+  };
+
+  var formatNumber = function(){
+    var numSplit, int, dec, type;
+    /*
+    Formatting the numbers
+    + or - before each number
+    number to exactly 2 decimals places
+    comma seperating the thousands
+    */
+
+    num = Math.abs(num);
+    num = num.toFixed(2);
+    // Splits the number string up between the decimal place
+    numSplit = num.split('.');
+    // Save anything above decimal in the int and all decimals in dec
+    int = numSplit[0];
+    if(int.length > 3){
+        int = int.substr(0, int.length - 3) + ',' + int.substr(int.length -3, 3);
+    };
+    dec = numSplit[1];
+
+    return (type === 'exp' ? '-' :  '+') + ' ' + int + '.' + dec;
   };
 
   //First method being used in the **ctrlAddItem** function
@@ -187,7 +211,7 @@ var UIController = (function() {
       // Replace the placeholder text with some actual data
       newHtml = html.replace('%id%', obj.id);
       newHtml = newHtml.replace('%description%', obj.description);
-      newHtml = newHtml.replace('%value%', obj.value);
+      newHtml = newHtml.replace('%value%', formatNumber(obj.value, type));
 
       // Insert the HTML into the DOM.. insertAdjacentHTML.beforeend will insert as last child in the classes income__list or expense__list depending on the if statement
       document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
@@ -216,10 +240,12 @@ var UIController = (function() {
     },
     
     displayBudget: function(obj) {
-      document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
-      document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
-      document.querySelector(DOMstrings.expensesLabel).textContent = obj.totalExp;
-      document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage;
+      var type;
+      obj.budget > 0 ? type = 'inc' : type =  'exp';
+      document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(obj.budget, type);
+      document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(obj.totalInc, 'inc');
+      document.querySelector(DOMstrings.expensesLabel).textContent = formatNumber(obj.totalExp, 'exp');
+      
     
       if (obj.percentage > 0) {
         document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage + '%';
@@ -242,11 +268,20 @@ var UIController = (function() {
       nodeListForEach(fields, function(current, index) {
 
         if(percentages[index] > 0) {
-            current.textContent = pecentages[index] +'%';
+            current.textContent = percentages[index] +'%';
         } else {
             current.textContent = '---';
         }
       });
+    },
+
+    displayMonth: function() {
+      var now, year, months, month;
+      now = new Date();
+      months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      month = now.getMonth();
+      year = now.getFullYear();
+      document.querySelector(DOMstrings.dateLabel).textContent = months[month] + ' ' + year;
     },
 
     // Makes the DOM string object globally accessible
@@ -339,6 +374,7 @@ var controller = (function(budgetCtrl, UICtrl) {
   return {
       init: function(){
           console.log('Application has been started');
+          UICtrl.displayMonth();
           UICtrl.displayBudget({
                 budget: 0,
                 totalInc: 0,
